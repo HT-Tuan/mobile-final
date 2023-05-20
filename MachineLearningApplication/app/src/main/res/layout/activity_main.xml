@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/camera_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
+    >
+    <androidx.camera.view.PreviewView
+        android:visibility="gone"
+        android:id="@+id/view_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:scaleType="fillStart" />
+    <ImageView
+        android:id="@+id/view_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:scaleType="fillStart"/>
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Please select an image from album"
+        android:textColor="@color/bottom_sheet_text_color"
+        />
+    <include
+        android:id="@+id/select_detection_layout"
+        layout="@layout/select_detection"/>
+    <View
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="1dp"
+        android:background="@color/bounding_box_color"
+        app:layout_anchor="@+id/select_detection_layout"
+        app:layout_anchorGravity="top"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!--custom-->
+    <color name="select_detection_background">#EEEEEE</color>
+    <color name="bottom_sheet_text_color">#808080</color>
+    <color name="bottom_sheet_button_color">#808080</color>
+    <color name="bounding_box_color">#FF6F00</color>
 </resources>

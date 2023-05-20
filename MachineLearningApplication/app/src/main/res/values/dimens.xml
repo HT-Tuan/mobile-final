@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="select_detection_padding">16dp</dimen>
+    <dimen name="select_detection_peek_height">50dp</dimen>
+    <dimen name="bottom_sheet_default_row_margin">16dp</dimen>
+    <dimen name="bottom_sheet_text_size">20sp</dimen>
+    <dimen name="bottom_sheet_margin_size_right">50dp</dimen>
+    <dimen name="bottom_sheet_margin_size_left">35dp</dimen>
+</resources>

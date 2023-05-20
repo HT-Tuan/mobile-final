@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/select_detection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:background="@color/select_detection_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/select_detection_padding"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="@dimen/select_detection_peek_height"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/bottom_sheet_behavior"
+                android:src="@drawable/img_up" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_interence_detect_input"
+                android:textColor="@color/bottom_sheet_text_color"
+                android:textSize="@dimen/bottom_sheet_text_size" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            android:gravity="center">
+            <Button
+                android:id="@+id/btn_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Camera"
+                android:backgroundTint="@color/bottom_sheet_button_color"
+                android:textSize="@dimen/bottom_sheet_text_size"
+                android:layout_marginLeft="@dimen/bottom_sheet_margin_size_left"/>
+            <Button
+                android:id="@+id/btn_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Image"
+                android:backgroundTint="@color/bottom_sheet_button_color"
+                android:textSize="@dimen/bottom_sheet_text_size"
+                android:layout_marginRight="@dimen/bottom_sheet_margin_size_right"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            android:background="@color/bottom_sheet_text_color"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_interence_detect"
+                android:textColor="@color/bottom_sheet_text_color"
+                android:textSize="@dimen/bottom_sheet_text_size" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/bottom_sheet_margin_size_left"
+                android:paddingLeft="39dp"
+                android:paddingRight="39dp"
+                android:backgroundTint="@color/bottom_sheet_button_color"
+                android:text="Age"
+                android:textSize="@dimen/bottom_sheet_text_size" />
+            <Button
+                android:id="@+id/btn_mood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Mood"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:backgroundTint="@color/bottom_sheet_button_color"
+                android:textSize="@dimen/bottom_sheet_text_size"
+                android:layout_marginRight="@dimen/bottom_sheet_margin_size_right"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            android:text="OR"
+            android:textColor="@color/bottom_sheet_text_color"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bottom_sheet_default_row_margin"
+            android:gravity="center">
+        <Button
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coloring"
+            android:backgroundTint="@color/bottom_sheet_button_color"
+            android:textSize="@dimen/bottom_sheet_text_size"
+            />
+        </RelativeLayout>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>
