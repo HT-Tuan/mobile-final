@@ -147,20 +147,63 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
-            displaySelectedImage(imageUri);
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                view_image.setImageBitmap(bitmap);
+                view_image_bitmap = bitmap;
+                detectFaces(bitmap);
+                view_image.setVisibility(View.VISIBLE);
+                tv_suggest.setVisibility(View.GONE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+    private void detectFaces(Bitmap bitmap) {
+        if (bitmap != null) {
+            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+            FirebaseVisionFaceDetectorOptions options =
+                    new FirebaseVisionFaceDetectorOptions.Builder()
+                            .setPerformanceMode(FirebaseVisionFaceDetectorOptions.FAST)
+                            .setLandmarkMode(FirebaseVisionFaceDetectorOptions.NO_LANDMARKS)
+                            .setClassificationMode(FirebaseVisionFaceDetectorOptions.NO_CLASSIFICATIONS)
+                            .setMinFaceSize(0.1f)
+                            .build();
 
-    private void displaySelectedImage(Uri imageUri) {
-        try {
-            view_image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-            view_image.setImageBitmap(view_image_bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+            FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                    .getVisionFaceDetector(options);
+
+            detector.detectInImage(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
+                        @Override
+                        public void onSuccess(List<FirebaseVisionFace> faces) {
+                            processFaces(faces, bitmap);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(MainActivity.this, "Failed to detect faces", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
+    }
+    private void processFaces(List<FirebaseVisionFace> faces, Bitmap bitmap) {
+        Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(mutableBitmap);
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5f);
+
+        for (FirebaseVisionFace face : faces) {
+            RectF boundingBox = new RectF(face.getBoundingBox());
+            canvas.drawRect(boundingBox, paint);
+        }
+
+        view_image.setImageBitmap(mutableBitmap);
     }
 
     @Override
