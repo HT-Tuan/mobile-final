@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     private static final int PICK_IMAGE_REQUEST = 1;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ProcessCameraProvider cameraProvider = null;
+    private boolean isCamera = false;
     private ImageView view_image;
     private Bitmap view_image_bitmap = null;
     private Button btn_camera;
@@ -98,6 +100,14 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isCamera == true){
+                    isCamera = false;
+                    cameraProvider.unbindAll();
+                    btn_camera.setText("Camera");
+                    view_image.setVisibility(View.GONE);
+                    tv_suggest.setVisibility(View.VISIBLE);
+                    return;
+                }
                 if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
                 }else{
@@ -105,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                         startCameraX(cameraProvider);
                         view_image.setVisibility(View.VISIBLE);
                         tv_suggest.setVisibility(View.GONE);
+                        btn_camera.setText("  Stop  ");
                     }
                     else{
                         Toast.makeText(v.getContext(), "camera start error", Toast.LENGTH_LONG).show();
@@ -171,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                     startCameraX(cameraProvider);
                     view_image.setVisibility(View.VISIBLE);
                     tv_suggest.setVisibility(View.GONE);
+                    btn_camera.setText("  STOP  ");
                 }
                 else{
                     Toast.makeText(this, "camera start error", Toast.LENGTH_LONG).show();
@@ -200,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
 
 
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis);
+        isCamera = true;
     }
 
     @SuppressLint("UnsafeOptInUsageError")
