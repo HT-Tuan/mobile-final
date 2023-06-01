@@ -1,4 +1,4 @@
-package com.hcmute.edu.vn.machinelearningapplication;
+package com.hcmute.edu.vn.machinelearningapplication.app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.hcmute.edu.vn.machinelearningapplication.R;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ProcessCameraProvider cameraProvider = null;
     private PreviewView view_camera;
     private ImageView view_image;
+    private Bitmap view_image_bitmap = null;
     private Button btn_camera;
     private Button btn_image;
     private TextView tv_suggest;
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         btn_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                view_image_bitmap = null;
                 view_image.setImageDrawable(null);
                 view_image.setVisibility(View.VISIBLE);
                 view_camera.setVisibility(View.GONE);
@@ -109,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void displaySelectedImage(Uri imageUri) {
         try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-            view_image.setImageBitmap(bitmap);
+            view_image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+            view_image.setImageBitmap(view_image_bitmap);
         } catch (IOException e) {
             e.printStackTrace();
         }
