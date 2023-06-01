@@ -133,7 +133,9 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 view_image.setVisibility(View.VISIBLE);
                 tv_suggest.setVisibility(View.GONE);
                 if(cameraProvider != null){
+                    isCamera = false;
                     cameraProvider.unbindAll();
+                    btn_camera.setText("Camera");
                 }
                 openImageSelection();
             }
@@ -212,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
             RectF boundingBox = new RectF(face.getBoundingBox());
             canvas.drawRect(boundingBox, paint);
         }
-
         view_image.setImageBitmap(mutableBitmap);
     }
 
