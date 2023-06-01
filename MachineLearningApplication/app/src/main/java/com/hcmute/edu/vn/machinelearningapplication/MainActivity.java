@@ -41,7 +41,6 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
-import com.hcmute.edu.vn.machinelearningapplication.R;
 
 import java.io.IOException;
 import java.util.List;
@@ -198,8 +197,6 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
         imageAnalysis.setAnalyzer(getExecutor(), this);
-
-
 
 
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis);
