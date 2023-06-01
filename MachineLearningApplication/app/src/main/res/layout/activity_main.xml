@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     >
     <TextView
-        android:visibility="gone"
         android:id="@+id/tv_suggest"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:background="@color/bounding_box_color"
         android:text="Please select input is camera or image below"
-        android:textColor="@color/bottom_sheet_text_color"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:padding="30dp"
         />
     <ImageView
+        android:visibility="gone"
         android:id="@+id/view_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
