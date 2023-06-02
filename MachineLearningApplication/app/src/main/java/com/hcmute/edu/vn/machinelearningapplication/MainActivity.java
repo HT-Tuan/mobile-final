@@ -51,6 +51,7 @@ import java.util.concurrent.Executor;
 public class MainActivity extends AppCompatActivity implements ImageAnalysis.Analyzer {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static int action = 0;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ProcessCameraProvider cameraProvider = null;
     private boolean isCamera = false;
@@ -58,11 +59,13 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     private Bitmap view_image_bitmap = null;
     private Button btn_camera;
     private Button btn_image;
+    private Button btn_age;
     private TextView tv_suggest;
     // model FaceDetection
     private FirebaseVisionFaceDetectorOptions options;
     private FirebaseVisionFaceDetector faceDetector;
     private FirebaseVisionImage image;
+    private AgeModelUtil ageModelUtil;
     private int degreesToFirebaseRotation(int degrees) {
         switch (degrees) {
             case 0:
@@ -83,9 +86,11 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
+        ageModelUtil = new AgeModelUtil(getApplicationContext());
         view_image = findViewById(R.id.view_image);
         btn_camera = findViewById(R.id.btn_camera);
         btn_image = findViewById(R.id.btn_image);
+        btn_age = findViewById(R.id.btn_age);
         tv_suggest = findViewById(R.id.tv_suggest);
         //
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -112,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
                 }else{
                     if(cameraProvider != null) {
+                        action = 0;
+                        view_image.setImageDrawable(null);
                         startCameraX(cameraProvider);
                         view_image.setVisibility(View.VISIBLE);
                         tv_suggest.setVisibility(View.GONE);
@@ -128,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
         btn_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                action = 0;
                 view_image_bitmap = null;
                 view_image.setImageDrawable(null);
                 view_image.setVisibility(View.VISIBLE);
@@ -140,6 +148,13 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 openImageSelection();
             }
         });
+        btn_age.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                action = 1;
+                detectAge(view_image_bitmap);
+            }
+        });
 
         //setup FaceDetector
         options = new FirebaseVisionFaceDetectorOptions.Builder()
@@ -147,6 +162,15 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 .build();
         faceDetector = FirebaseVision.getInstance().getVisionFaceDetector(options);
     }
+
+    private void detectAge(Bitmap bitmap) {
+        if(bitmap == null)
+            return;
+        detectFaces(bitmap, action);
+        view_image.setVisibility(View.VISIBLE);
+        tv_suggest.setVisibility(View.GONE);
+    }
+
     Executor getExecutor() {
         return ContextCompat.getMainExecutor(this);
     }
@@ -165,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 view_image.setImageBitmap(bitmap);
                 view_image_bitmap = bitmap;
-                detectFaces(bitmap);
+                detectFaces(bitmap, 0);
                 view_image.setVisibility(View.VISIBLE);
                 tv_suggest.setVisibility(View.GONE);
             } catch (IOException e) {
@@ -173,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
             }
         }
     }
-    private void detectFaces(Bitmap bitmap) {
+    private void detectFaces(Bitmap bitmap, int action) {
         if (bitmap != null) {
             FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
             FirebaseVisionFaceDetectorOptions options =
@@ -191,7 +215,10 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                     .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
                         @Override
                         public void onSuccess(List<FirebaseVisionFace> faces) {
-                            processFaces(faces, bitmap);
+                            if (action == 0)
+                                processFaces(faces, bitmap);
+                            else if (action == 1)
+                                processAgeFaces(faces, bitmap);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -214,6 +241,37 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
             RectF boundingBox = new RectF(face.getBoundingBox());
             canvas.drawRect(boundingBox, paint);
         }
+        view_image.setImageBitmap(mutableBitmap);
+    }
+    private void processAgeFaces(List<FirebaseVisionFace> faces, Bitmap bitmap) {
+        Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(mutableBitmap);
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5f);
+        paint.setTextSize(36f);
+
+        for (FirebaseVisionFace face : faces) {
+            RectF boundingBox = new RectF(face.getBoundingBox());
+            canvas.drawRect(boundingBox, paint);
+
+            // Crop the image inside the bounding box
+            int left = (int) boundingBox.left;
+            int top = (int) boundingBox.top;
+            int right = (int) boundingBox.right;
+            int bottom = (int) boundingBox.bottom;
+            Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, left, top, right - left, bottom - top);
+            int apparentAge = ageModelUtil.predictAge(croppedBitmap);
+
+            // Display the predicted age label on top of the bounding box
+            String ageLabel = "Age: " + apparentAge;
+            float textWidth = paint.measureText(ageLabel);
+            float x = boundingBox.left;
+            float y = boundingBox.top - 10f; // Adjust the y-coordinate for the desired position
+            canvas.drawText(ageLabel, x, y, paint);
+        }
+
         view_image.setImageBitmap(mutableBitmap);
     }
 
@@ -279,24 +337,11 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                     @Override
                     public void onSuccess(List<FirebaseVisionFace> faces) {
                         Log.e("FaceAnalyzer", "Found face: " + faces.size());
-                        Bitmap tempBitmap = bitmap.copy(Bitmap.Config.RGB_565, true);
-                        Canvas canvas = new Canvas(tempBitmap);
-                        Paint paint = new Paint();
-                        paint.setColor(Color.GREEN);
-                        paint.setStyle(Paint.Style.STROKE);
-                        paint.setStrokeWidth(5f);
-
-                        for (FirebaseVisionFace face : faces) {
-                            Rect bounds = face.getBoundingBox();
-                            RectF mappedBounds = new RectF();
-                            mappedBounds.left = bounds.left;
-                            mappedBounds.top = bounds.top ;
-                            mappedBounds.right = bounds.right;
-                            mappedBounds.bottom = bounds.bottom;
-
-                            canvas.drawRect(mappedBounds, paint);
-                        }
-                        view_image.setImageBitmap(tempBitmap);
+                        Bitmap tempBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                        if(action == 0)
+                            processFaces(faces, tempBitmap);
+                        else if (action == 1)
+                            processAgeFaces(faces, tempBitmap);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
