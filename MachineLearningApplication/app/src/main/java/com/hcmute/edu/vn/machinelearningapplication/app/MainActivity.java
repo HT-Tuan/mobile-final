@@ -397,6 +397,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 }
                 canvas.drawText(result, mappedBounds.left, mappedBounds.top - 20, textPaint);
             }
+            canvas.drawText("Detected: " + faces.size(), 1, 60, textPaint);
         }
         catch (Exception ex){
             Log.e("MainActivity", "Error visualize: " + ex.getMessage());
