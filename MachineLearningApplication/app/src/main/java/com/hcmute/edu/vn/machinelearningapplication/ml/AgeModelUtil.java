@@ -21,11 +21,14 @@ public class AgeModelUtil {
     private static final int IMAGE_SIZE = 224;
     private static final int NUM_CLASSES = 101;
 
+    private static AgeModelUtil instance;  // Singleton instance
+
     private Interpreter interpreter;
     private TensorImage inputImageBuffer;
     private TensorBuffer outputAgeBuffer;
 
-    public AgeModelUtil(Context context) {
+    // Private constructor to prevent direct instantiation
+    private AgeModelUtil(Context context) {
         try {
             // Initialize the TensorFlow Lite Interpreter
             Interpreter.Options options = new Interpreter.Options();
@@ -40,6 +43,14 @@ public class AgeModelUtil {
         } catch (IOException e) {
             Log.e(TAG, "Error initializing AgeModelUtil: " + e.getMessage());
         }
+    }
+
+    // Method to get the singleton instance
+    public static synchronized AgeModelUtil getInstance(Context context) {
+        if (instance == null) {
+            instance = new AgeModelUtil(context.getApplicationContext());
+        }
+        return instance;
     }
 
     private MappedByteBuffer loadModelFile(Context context) throws IOException {

@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     private Bitmap detected_face = null;
 
     private int degreesToFirebaseRotation(int degrees) {
+        Log.d("MainActivity", "degreesToFirebaseRotation");
         switch (degrees) {
             case 0:
                 return FirebaseVisionImageMetadata.ROTATION_0;
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
-        ageModelUtil = new AgeModelUtil(getApplicationContext());
+        Log.d("MainActivity", "onCreate");
+        ageModelUtil = AgeModelUtil.getInstance(getApplicationContext());
         emotionModelUtil = new EmotionModelUtil(getApplicationContext());
         view_image = findViewById(R.id.view_image);
         btn_camera = findViewById(R.id.btn_camera);
@@ -242,10 +244,12 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     }
 
     Executor getExecutor() {
+        Log.d("MainActivity", "getExecutor");
         return ContextCompat.getMainExecutor(this);
     }
 
     private void openImageSelection() {
+        Log.d("MainActivity", "openImageSelection");
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
@@ -253,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("MainActivity", "onActivityResult");
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
             try {
@@ -274,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("MainActivity", "onRequestPermissionsResult");
         if(requestCode == CAMERA_PERMISSION_REQUEST_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if(cameraProvider != null) {
@@ -298,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     }
 
     private void startCameraX(ProcessCameraProvider cameraProvider) {
+        Log.d("MainActivity", "startCameraX");
         cameraProvider.unbindAll();
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -317,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     @SuppressLint("UnsafeOptInUsageError")
     @Override
     public void analyze(@NonNull ImageProxy imageProxy) {
+        Log.d("MainActivity", "analyze");
         if (imageProxy == null || imageProxy.getImage() == null) {
             Log.e("FaceAnalyzer", "Because: ImageProxy = null || ImageProxy.getImage() = null");
             return;
@@ -330,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
                     @Override
                     public void onSuccess(List<FirebaseVisionFace> faces) {
-                        Log.e("FaceAnalyzer", "Found face: " + faces.size());
+//                        Log.e("FaceAnalyzer", "Found face: " + faces.size());
                         Bitmap tempBitmap = imageProxy.toBitmap().copy(Bitmap.Config.ARGB_8888, true);
                         visualize(tempBitmap, faces);
                     }
@@ -350,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     }
 
     public void analyzeImage(Bitmap bitmap){
+        Log.d("MainActivity", "analyzeImage");
         if (bitmap == null) {
             Log.e("FaceAnalyzer", "Because: bitmap = null");
             return;
@@ -359,7 +368,6 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
                     @Override
                     public void onSuccess(List<FirebaseVisionFace> faces) {
-                        Log.e("FaceAnalyzer", "Found face: " + faces.size());
                         Bitmap tempBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                         visualize(tempBitmap, faces);
                     }
@@ -372,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 });
     }
     private void visualize(Bitmap input, List<FirebaseVisionFace> faces){
+        Log.d("MainActivity", "start visualize");
         try {
             canvas.setBitmap(input);
             //
@@ -386,10 +395,12 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                 result = "";
                 switch (action){
                     case 1:
+                        Log.d("MainActivity", "visualize Age");
                         result = String.valueOf(ageModelUtil.predictAge(detected_face));
                         break;
                     case 2:
                         //Emotion
+                        Log.d("MainActivity", "visualize Emotion");
                         detected_face = toGrayscale(detected_face);
                         detected_face = Bitmap.createScaledBitmap(detected_face, 48, 48, true);
                         result = emotionModelUtil.predictEmotion(detected_face);
@@ -403,8 +414,10 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
             Log.e("MainActivity", "Error visualize: " + ex.getMessage());
         }
         view_image.setImageBitmap(input);
+        Log.d("MainActivity", "finish visualize");
     }
     private Bitmap toGrayscale(Bitmap bmpOriginal) {
+        Log.d("MainActivity", "toGrayscale");
         int width, height;
         height = bmpOriginal.getHeight();
         width = bmpOriginal.getWidth();
