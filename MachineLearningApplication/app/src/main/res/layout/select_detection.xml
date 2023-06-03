@@ -117,6 +117,22 @@
                 android:backgroundTint="@color/bottom_sheet_button_color"
                 android:textSize="@dimen/bottom_sheet_text_size"
                 android:layout_marginRight="@dimen/bottom_sheet_margin_size_right"/>
+
+            <Button
+                android:id="@+id/btn_exit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="100dp"
+                android:backgroundTint="@color/bottom_sheet_button_color"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="Exit"
+                android:textSize="@dimen/bottom_sheet_text_size" />
         </RelativeLayout>
 
         <TextView

@@ -1,10 +1,12 @@
-package com.hcmute.edu.vn.machinelearningapplication;
+package com.hcmute.edu.vn.machinelearningapplication.app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.hcmute.edu.vn.machinelearningapplication.R;
 
 public class splash extends AppCompatActivity {
 

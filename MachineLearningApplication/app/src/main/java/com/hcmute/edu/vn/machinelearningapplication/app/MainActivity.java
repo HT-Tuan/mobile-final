@@ -1,4 +1,4 @@
-package com.hcmute.edu.vn.machinelearningapplication;
+package com.hcmute.edu.vn.machinelearningapplication.app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +40,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
+import com.hcmute.edu.vn.machinelearningapplication.ml.AgeModelUtil;
+import com.hcmute.edu.vn.machinelearningapplication.R;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
     private Button btn_camera;
     private Button btn_image;
     private Button btn_age;
+    private Button btn_exit;
     private TextView tv_suggest;
     // model FaceDetection
     private FirebaseVisionFaceDetectorOptions options;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
         btn_camera = findViewById(R.id.btn_camera);
         btn_image = findViewById(R.id.btn_image);
         btn_age = findViewById(R.id.btn_age);
+        btn_exit = findViewById(R.id.btn_exit);
         tv_suggest = findViewById(R.id.tv_suggest);
         //
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -153,6 +155,13 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
             public void onClick(View v) {
                 action = 1;
                 detectAge(view_image_bitmap);
+            }
+        });
+        btn_exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.finish();
+                System.exit(0);
             }
         });
 
@@ -311,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements ImageAnalysis.Ana
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
         imageAnalysis.setAnalyzer(getExecutor(), this);
-
 
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis);
         isCamera = true;

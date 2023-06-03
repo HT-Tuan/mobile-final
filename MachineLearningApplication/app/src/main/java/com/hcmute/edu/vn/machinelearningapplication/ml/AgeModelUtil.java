@@ -1,4 +1,4 @@
-package com.hcmute.edu.vn.machinelearningapplication;
+package com.hcmute.edu.vn.machinelearningapplication.ml;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;

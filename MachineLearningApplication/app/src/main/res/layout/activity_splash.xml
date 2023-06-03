@@ -6,7 +6,7 @@
     android:gravity="center"
     android:background="@color/bounding_box_color"
     android:orientation="vertical"
-    tools:context="com.hcmute.edu.vn.machinelearningapplication.splash">
+    tools:context="com.hcmute.edu.vn.machinelearningapplication.app.splash">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="120dp"
