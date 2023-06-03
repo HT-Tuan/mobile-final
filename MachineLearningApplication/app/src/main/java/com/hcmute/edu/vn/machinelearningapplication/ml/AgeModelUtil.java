@@ -46,7 +46,7 @@ public class AgeModelUtil {
     }
 
     // Method to get the singleton instance
-    public static synchronized AgeModelUtil getInstance(Context context) {
+    public static AgeModelUtil getInstance(Context context) {
         if (instance == null) {
             instance = new AgeModelUtil(context.getApplicationContext());
         }
